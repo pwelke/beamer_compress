@@ -1,3 +1,5 @@
+#!/bin/env python
+
 import os
 import sys
 import tempfile
@@ -12,11 +14,11 @@ if __name__ == "__main__":
     outfile = sys.argv[2]
 
     _, tmpn = tempfile.mkstemp()
-    os.system(f'pdftk \"{filename}\" dump_data > {tmpn}')
+    os.system(f'pdftk "{filename}" dump_data > {tmpn}')
 
     framelist = list()
     pagelist = list()  
-    with open('tmp', 'r') as f:
+    with open(tmpn, 'r') as f:
         for line in f:
             tokens = line.split()
             if tokens[0] == 'PageLabelNewIndex:':
@@ -34,4 +36,4 @@ if __name__ == "__main__":
     print('Extracted frame->page mapping:')
     print([f'{a}->{b}' for a,b in zip(framelist, pagelist)])
 
-    os.system(f'pdftk \"{filename}\" cat {" ".join(pagelist)} output \"{outfile}\"')
+    os.system(f'pdftk "{filename}" cat {" ".join(pagelist)} output "{outfile}"')
