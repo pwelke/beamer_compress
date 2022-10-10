@@ -19,7 +19,7 @@ In this case, those two images appear both next to each other, with the second f
 
 ## The Solution
 
-The script in this repository takes a pdf and extracts the last page for each page label. Beamer stores overlays with identical labels, i.e. all overlays of frame '42' will have page label '42'.
+The script in this repository takes a pdf (created with pdflatex) and extracts the last page for each page label. Beamer stores overlays with identical labels, i.e. all overlays of frame '42' will have page label '42'.
 
 This may not work for your usecase, e.g. if you have slides with intermediate figures that show completely different things.
 
@@ -27,10 +27,9 @@ If you, on the other hand, just use lazy person animations of hand drawn algorit
 
 ## Usage
 
-The script requires ``python>=3.8``, the python package ``python-poppler`` as well as the command line utility ``pdftk`` to be available on your system. The script was tested on Ubuntu 20.04, where these requirements can be fulfilled by running
+The script requires ``python>=3.8`` (for f-strings) as well as the command line utility ``pdftk`` to be available on your system. The script was tested on Ubuntu 20.04, where these requirements can be fulfilled by running
 
 ```
-sudo pip install python-poppler
 sudo apt install pdftk
 ```
 
@@ -44,5 +43,4 @@ will then select the last overlays from each frame in ``INFILE`` and store them 
 
 ## Known Issues
 
-As I am lazy, the script depends on two pdf libraries. 
-It could certainly be improved to work with only one (probably pdftk) which would allow to get rid of the python requirement, as well.
+I am not an expert on pdfs and it is very likely that the output of any other latex compiler (apart from pdflatex) will break the script.

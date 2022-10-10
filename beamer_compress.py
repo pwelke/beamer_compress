@@ -1,6 +1,6 @@
-import poppler as pop
 import os
 import sys
+import tempfile
 
 if __name__ == "__main__":
 
@@ -11,30 +11,27 @@ if __name__ == "__main__":
     filename = sys.argv[1]
     outfile = sys.argv[2]
 
-    doc = pop.load_from_file(filename)
+    _, tmpn = tempfile.mkstemp()
+    os.system(f'pdftk \"{filename}\" dump_data > {tmpn}')
 
-    print(doc.pages)
-
-    currentframe = doc.create_page(0)
-    currentframelabel = 1
     framelist = list()
-    pagelist = list()
+    pagelist = list()  
+    with open('tmp', 'r') as f:
+        for line in f:
+            tokens = line.split()
+            if tokens[0] == 'PageLabelNewIndex:':
+                pagelist.append(str(int(tokens[1]) - 1))
+            if tokens[0] == 'PageLabelPrefix:':
+                framelist.append(tokens[1])
+            if tokens[0] == 'NumberOfPages:':
+                nop = tokens[1]
+    
+    os.remove(tmpn)
 
-    for i in range(1, doc.pages):
-        page = doc.create_page(i)
-        if page.label == currentframelabel:
-            currentframe = page
-        else:
-            framelist.append(currentframe)
-            pagelist.append(str(i))
-            currentframe = page
-            currentframelabel = page.label
-
-    framelist.append(currentframe)
-    pagelist.append(str(doc.pages))
-
+    pagelist.pop(0)
+    pagelist.append(nop)    
 
     print('Extracted frame->page mapping:')
-    print([f'{a.label}->{b}' for a,b in zip(framelist, pagelist)])
+    print([f'{a}->{b}' for a,b in zip(framelist, pagelist)])
 
     os.system(f'pdftk \"{filename}\" cat {" ".join(pagelist)} output \"{outfile}\"')
